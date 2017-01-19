@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'asdfadsf';
+  src:  url('./fonts/Bagnard.woff2') format('woff2'),
+        url('./fonts/Bagnard.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'fafafaf';
+    src:  url('./fonts/FiraSans-LightItalic.woff2') format('woff2'),
+          url('./fonts/FiraSans-LightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+}
+
+html {
+    height: 100%;
+    background: aliceblue;
+    display: flex;
+    justify-content: center;
+    transition: background 0.7s ease;
+}
+body {
+    width: 700px;
+    font-family: 'fafafaf';
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    margin: 0;
+}
+
+h1 {
+    font-family: 'asdfadsf';
+    font-size: 120px;
+    margin: 0;
+    margin-bottom: 10px;
+    color: blue;
+}
+
+em {
+    color: blue;
+    margin-left: 15px;
+    font-size: 2em;
+    font-weight: 300;
+}
