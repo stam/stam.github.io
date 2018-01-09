@@ -1,0 +1,67 @@
+.linear-wipe {
+  text-align: center;
+  
+  background: linear-gradient(to right, #FFF 20%, #FF0 40%, #FF0 60%, #FFF 80%);
+  background-size: 200% auto;
+  
+  color: #000;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  animation: shine 1s linear infinite;
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+}
+
+@font-face {
+  font-family: 'asdfadsf';
+  src:  url('../fonts/DalaPrisma-Roman-Webb.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'fafafaf';
+    src:  url('../fonts/FiraSans-LightItalic.woff2') format('woff2'),
+          url('../fonts/FiraSans-LightItalic.woff') format('woff');
+    font-weight: 300;
+    font-style: italic;
+}
+
+html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    background: #f3f3f3;
+}
+
+body {
+    width: 700px;
+    font-family: 'fafafaf';
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    margin: 0;
+}
+
+h1 {
+    font-family: 'asdfadsf';
+    font-size: 120px;
+    text-align: center;
+    font-weight: normal;
+
+    margin: 0;
+    margin-bottom: 10px;
+    color: blue;
+}
+
+em {
+    color: blue;
+    margin-left: 15px;
+    font-size: 2em;
+    font-weight: 300;
+}

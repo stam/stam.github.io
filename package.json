@@ -1,0 +1,21 @@
+{
+  "name": "jasper-landing",
+  "author": "JasperStam",
+  "version": "0.0.1",
+  "description": "Landing page for jasper.wtf",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasperStam/jasper-landing.git"
+  },
+  "keywords": [
+    "jasper-wtf"
+  ],
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0"
+  },
+  "scripts": {
+    "start": "gulp"
+  },
+  "license": "ISC"
+}
