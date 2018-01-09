@@ -15,6 +15,7 @@
     "gulp-sass": "^3.1.0"
   },
   "scripts": {
+    "deploy": "npm run build && rsync -avz build/ jasper@jasper.wtf:/home/jasper/landing",
     "start": "gulp",
     "build": "gulp build"
   },
