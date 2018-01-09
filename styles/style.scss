@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: 'asdfadsf';
-  src:  url('../fonts/DalaPrisma-Roman-Webb.woff2') format('woff2');
+  src:  url('../fonts/DalaPrisma-Roman-Web.woff2') format('woff2');
 }
 
 @font-face {
@@ -56,11 +56,10 @@ h1 {
 
     margin: 0;
     margin-bottom: 10px;
-    color: blue;
+    color: black;
 }
 
 em {
-    color: blue;
     margin-left: 15px;
     font-size: 2em;
     font-weight: 300;
