@@ -24,7 +24,10 @@ export class Renderer {
     this.camera = camera;
     this.camera.rotateX(Math.PI / 2.25);
 
-    const renderer = new Three.WebGLRenderer({ canvas });
+    const renderer = new Three.WebGLRenderer({
+      antialias: true,
+      canvas
+    });
     renderer.setSize(width, height);
     const backgroundColor = new Three.Color("#fff");
 
@@ -41,15 +44,18 @@ export class Renderer {
     const cube = new Three.Mesh(geometry, material);
     this.scene.add(cube);
 
-    const g2 = new Three.PlaneGeometry(150, 150, 15, 15);
+    const planeGeometry = new Three.PlaneGeometry(80, 80, 20, 20);
+    const wireframeGeometry = new Three.WireframeGeometry(planeGeometry);
 
-    const m2 = new Three.MeshPhongMaterial({
-      color: 0x00ff00,
-      wireframe: true
+    var lineMaterial = new Three.LineBasicMaterial({
+      color: new Three.Color("#C429A8"),
+
+      linewidth: 20
     });
 
-    const plane = new Three.Mesh(g2, m2);
-    this.scene.add(plane);
+    const gridMesh = new Three.LineSegments(wireframeGeometry, lineMaterial);
+
+    this.scene.add(gridMesh);
   }
 
   animate() {
