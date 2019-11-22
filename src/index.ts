@@ -1,5 +1,5 @@
 import * as Three from "three";
-import { OrbitControls } from "three-orbitcontrols-ts";
+// import { OrbitControls } from "three-orbitcontrols-ts";
 
 export class Renderer {
   renderer: Three.WebGLRenderer;
@@ -12,8 +12,6 @@ export class Renderer {
     this.setupScene(canvas);
     this.createGrid();
     this.animate();
-
-    this.camera.lookAt(this._focus.position);
   }
 
   setupScene(canvas: HTMLCanvasElement) {
@@ -24,6 +22,7 @@ export class Renderer {
     camera.position.y = -5;
     camera.position.z = 1.5;
     this.camera = camera;
+    this.camera.rotateX(Math.PI / 2.25);
 
     const renderer = new Three.WebGLRenderer({ canvas });
     renderer.setSize(width, height);
@@ -33,7 +32,7 @@ export class Renderer {
 
     this.renderer = renderer;
 
-    new OrbitControls(camera, renderer.domElement);
+    // new OrbitControls(camera, renderer.domElement);
   }
 
   createGrid() {
@@ -41,11 +40,8 @@ export class Renderer {
     const material = new Three.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new Three.Mesh(geometry, material);
     this.scene.add(cube);
-    this._focus = cube;
 
-    this.camera.position.z = 5;
-
-    const g2 = new Three.PlaneGeometry(60, 60, 9, 9);
+    const g2 = new Three.PlaneGeometry(150, 150, 15, 15);
 
     const m2 = new Three.MeshPhongMaterial({
       color: 0x00ff00,
