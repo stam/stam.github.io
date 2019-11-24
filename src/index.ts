@@ -24,7 +24,6 @@ export class Renderer {
     camera.position.z = 10;
     this.camera = camera;
     camera.lookAt(this.scene.position);
-    // this.camera.rotateX(Math.PI / 2.5);
 
     const renderer = new Three.WebGLRenderer({
       antialias: true,
@@ -36,8 +35,6 @@ export class Renderer {
     renderer.setClearColor(backgroundColor, 1);
 
     this.renderer = renderer;
-
-    // new OrbitControls(camera, renderer.domElement);
   }
 
   createGrid() {
@@ -47,15 +44,12 @@ export class Renderer {
     this.scene.add(cube);
 
     const plane = new Three.PlaneGeometry(200, 100, 50, 40);
-    // const wireframeGeometry = new Three.WireframeGeometry(this._plane);
 
-    // var lineMaterial = new Three.LineBasicMaterial({
-    //   color: new Three.Color("#C429A8"),
-
-    //   linewidth: 20
-    // });
-
-    const gridMaterial = new Three.MeshLambertMaterial();
+    // const gridMaterial = new Three.MeshLambertMaterial();
+    const gridMaterial = new Three.ShaderMaterial({
+      vertexShader: document.getElementById("vertexShader").textContent,
+      fragmentShader: document.getElementById("fragmentShader").textContent
+    });
     this._grid = new Three.Mesh(plane, gridMaterial);
     // this._grid.wire;
 

@@ -9,5 +9,27 @@
   <body>
     <canvas class="main"></canvas>
   </body>
+  <script type="x-shader/x-vertex" id="vertexShader">
+    varying float height;
+
+    void main() {
+
+      vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+      height = worldPosition.z;
+      gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    }
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentShader">
+    uniform float time;
+    uniform vec2 resolution;
+
+    varying float height;
+
+    void main()	{
+        gl_FragColor = vec4(height, 0.0, 0.0, 1.0);
+    }
+  </script>
+
   <script src="./index.ts"></script>
 </html>
