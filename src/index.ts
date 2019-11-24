@@ -6,7 +6,8 @@ export class Renderer {
   scene: Three.Scene;
   camera: Three.Camera;
 
-  _focus: Three.Mesh;
+  _plane: Three.Geometry;
+  _grid: Three.Mesh;
 
   constructor(canvas: HTMLCanvasElement) {
     this.setupScene(canvas);
@@ -19,10 +20,11 @@ export class Renderer {
     this.scene = new Three.Scene();
 
     const camera = new Three.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.y = -5;
-    camera.position.z = 1.5;
+    camera.position.y = -15;
+    camera.position.z = 10;
     this.camera = camera;
-    this.camera.rotateX(Math.PI / 2.25);
+    camera.lookAt(this.scene.position);
+    // this.camera.rotateX(Math.PI / 2.5);
 
     const renderer = new Three.WebGLRenderer({
       antialias: true,
@@ -44,22 +46,42 @@ export class Renderer {
     const cube = new Three.Mesh(geometry, material);
     this.scene.add(cube);
 
-    const planeGeometry = new Three.PlaneGeometry(80, 80, 20, 20);
-    const wireframeGeometry = new Three.WireframeGeometry(planeGeometry);
+    const plane = new Three.PlaneGeometry(200, 100, 50, 40);
+    // const wireframeGeometry = new Three.WireframeGeometry(this._plane);
 
-    var lineMaterial = new Three.LineBasicMaterial({
-      color: new Three.Color("#C429A8"),
+    // var lineMaterial = new Three.LineBasicMaterial({
+    //   color: new Three.Color("#C429A8"),
 
-      linewidth: 20
-    });
+    //   linewidth: 20
+    // });
 
-    const gridMesh = new Three.LineSegments(wireframeGeometry, lineMaterial);
+    const gridMaterial = new Three.MeshLambertMaterial();
+    this._grid = new Three.Mesh(plane, gridMaterial);
+    // this._grid.wire;
 
-    this.scene.add(gridMesh);
+    // this._grid = new Three.LineSegments(wireframeGeometry, lineMaterial);
+
+    this.scene.add(this._grid);
+  }
+
+  setZ() {
+    // const grid = this._grid;
+    // grid.geometry
+    const plane = this._grid.geometry as Three.Geometry;
+    // const p = this._plane;
+    plane.verticesNeedUpdate = true;
+
+    for (let i = 0; i < plane.vertices.length; i++) {
+      const v = plane.vertices[i];
+      v.z = Math.random();
+      // console.log(v.z);
+    }
   }
 
   animate() {
-    requestAnimationFrame(this.animate.bind(this));
+    // requestAnimationFrame(this.animate.bind(this));
+
+    this.setZ();
 
     this.renderer.render(this.scene, this.camera);
   }
