@@ -27,7 +27,7 @@
     varying vec3 vPos;
 
     void main()	{
-        gl_FragColor = vec4(vPos.z, 0.0, 0.0, 1.0);
+        gl_FragColor = vec4(vPos.z, vPos.z * ((vPos.x + 5.)/ 25.0), vPos.z * ((vPos.y + 5.)/ 25.0), 1.0);
     }
   </script>
 

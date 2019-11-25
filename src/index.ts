@@ -1,5 +1,19 @@
 import * as Three from "three";
+import FastSimplexNoise from "fast-simplex-noise";
 // import { OrbitControls } from "three-orbitcontrols-ts";
+
+const WIDTH = 50;
+const HEIGHT = 40;
+
+let X_OFFSET = 0;
+let Y_OFFSET = 0;
+
+const noiseGen = new FastSimplexNoise({
+  frequency: 0.1,
+  max: 2,
+  min: -1,
+  octaves: 2
+});
 
 export class Renderer {
   renderer: Three.WebGLRenderer;
@@ -41,9 +55,9 @@ export class Renderer {
     const geometry = new Three.BoxGeometry(1, 1, 1);
     const material = new Three.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new Three.Mesh(geometry, material);
-    this.scene.add(cube);
+    // this.scene.add(cube);
 
-    const plane = new Three.PlaneGeometry(200, 100, 50, 40);
+    const plane = new Three.PlaneGeometry(200, 100, WIDTH, HEIGHT);
 
     // const gridMaterial = new Three.MeshLambertMaterial();
     const gridMaterial = new Three.ShaderMaterial({
@@ -65,15 +79,32 @@ export class Renderer {
     // const p = this._plane;
     plane.verticesNeedUpdate = true;
 
-    for (let i = 0; i < plane.vertices.length; i++) {
-      const v = plane.vertices[i];
-      v.z = Math.random();
-      // console.log(v.z);
+    console.log("l", plane.vertices.length);
+
+    const noise = [];
+    for (let x = 0; x < WIDTH; x++) {
+      // noise[x] = [];
+      for (let y = 0; y < HEIGHT; y++) {
+        const index = x * HEIGHT + y;
+        const n = noiseGen.scaled([y + Y_OFFSET, x + X_OFFSET]);
+        // const n = noiseGen.scaled([x + X_OFFSET, y + Y_OFFSET]);
+        noise[index] = `${n},${x},${y},${index}`;
+        const v = plane.vertices[index];
+        v.z = n;
+      }
     }
+    X_OFFSET += 0.1;
+    // console.log(noise);
+
+    // for (let i = 0; i < plane.vertices.length; i++) {
+    //   const v = plane.vertices[i];
+    //   v.z = Math.random();
+    //   // console.log(v.z);
+    // }
   }
 
   animate() {
-    // requestAnimationFrame(this.animate.bind(this));
+    requestAnimationFrame(this.animate.bind(this));
 
     this.setZ();
 
