@@ -37,7 +37,7 @@ export class Renderer {
       canvas
     });
     renderer.setSize(width, height);
-    const backgroundColor = new Three.Color("#fff");
+    const backgroundColor = new Three.Color("#000");
 
     renderer.setClearColor(backgroundColor, 1);
 
@@ -63,13 +63,13 @@ export class Renderer {
     for (let row = 0; row < HEIGHT; row++) {
       for (let col = 0; col < WIDTH; col++) {
         const index = col + row * (WIDTH + 1);
+        // X_OFFSET += 0.004;
 
         const { x, y } = plane.vertices[index];
-        const noiseValue =
-          noiseGen.getValue(X_OFFSET + x / 20, Y_OFFSET + y / 20, 0) * 4;
+        const noiseValue = noiseGen.getValue(x / 30, Y_OFFSET + y / 20, 0) * 3;
         plane.vertices[index].z = noiseValue;
       }
-      Y_OFFSET += 0.00056;
+      Y_OFFSET += 0.001;
     }
   }
 

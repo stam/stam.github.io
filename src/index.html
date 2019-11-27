@@ -10,24 +10,37 @@
     <canvas class="main"></canvas>
   </body>
   <script type="x-shader/x-vertex" id="vertexShader">
-    varying vec3 vPos;
+    varying vec3 vUv;
 
     void main() {
 
       vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-      vPos = worldPosition.xyz;
+      vUv = worldPosition.xyz;
       gl_Position = projectionMatrix * viewMatrix * worldPosition;
     }
   </script>
 
   <script type="x-shader/x-fragment" id="fragmentShader">
+    #extension GL_OES_standard_derivatives : enable
+
     uniform float time;
     uniform vec2 resolution;
 
-    varying vec3 vPos;
+    varying vec3 vUv;
 
-    void main()	{
-        gl_FragColor = vec4(vPos.z, vPos.z * ((vPos.x + 5.)/ 25.0), vPos.z * ((vPos.y + 5.)/ 25.0), 1.0);
+
+    void main() {
+      // Pick a coordinate to visualize in a grid
+      vec2 coord = vUv.xz;
+
+      // Compute anti-aliased world-space grid lines
+      vec2 grid = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+      float line = min(grid.x, grid.y);
+
+      float intensity = 1.0 - min(line, 5.);
+
+      // Just visualize the grid lines directly
+      gl_FragColor = vec4(intensity, 0., intensity, 1.0);
     }
   </script>
 
