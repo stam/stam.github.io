@@ -13,7 +13,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "open-simplex-noise": "^1.7.0",
+    "libnoise-ts": "^0.1.1",
     "three": "^0.110.0",
     "three-orbitcontrols-ts": "^0.1.2"
   }

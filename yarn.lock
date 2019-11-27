@@ -3073,6 +3073,11 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+libnoise-ts@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/libnoise-ts/-/libnoise-ts-0.1.1.tgz#e1a2a43e281a192cc52fb1b9384f23e5661ab430"
+  integrity sha512-iUKkuY44Y6p03UFPb3Rw/gc4vgJe3Gnoz8PhxIX8BsXoJlFpJ8LWe7sIWqzJDCWKK7M5j+cDdAZPRRJHxKtivQ==
+
 locate-path@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-3.0.0.tgz#dbec3b3ab759758071b58fe59fc41871af21400e"
@@ -3550,11 +3555,6 @@ onetime@^2.0.0:
   integrity sha1-BnQoIw/WdEOyeUsiu6UotoZ5YtQ=
   dependencies:
     mimic-fn "^1.0.0"
-
-open-simplex-noise@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/open-simplex-noise/-/open-simplex-noise-1.7.0.tgz#eb7bde6d0fec928024675da3fa59e499a1ff40d2"
-  integrity sha512-2IofLUR/T3nZYCD6Il6509efdtdM6bQQ8rEWxgdHNdCALCgwtPnuxvf4e4k47mHBuDht2oEzmVRdOCpMfwq/Cw==
 
 opn@^5.1.0:
   version "5.5.0"
