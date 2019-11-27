@@ -1,5 +1,5 @@
 import * as Three from "three";
-import FastSimplexNoise from "fast-simplex-noise";
+import OpenSimplexNoise from "open-simplex-noise";
 
 const WIDTH = 50;
 const HEIGHT = 40;
@@ -7,12 +7,7 @@ const HEIGHT = 40;
 let X_OFFSET = 0;
 let Y_OFFSET = 0;
 
-const noiseGen = new FastSimplexNoise({
-  frequency: 0.1,
-  max: 2,
-  min: -1,
-  octaves: 2
-});
+const noiseGen = new OpenSimplexNoise(Date.now());
 
 export class Renderer {
   renderer: Three.WebGLRenderer;
@@ -65,16 +60,15 @@ export class Renderer {
     const plane = this._grid.geometry as Three.Geometry;
     plane.verticesNeedUpdate = true;
 
-    const noise = [];
     for (let x = 0; x < WIDTH; x++) {
       for (let y = 0; y < HEIGHT; y++) {
         const index = x * HEIGHT + y;
-        const n = noiseGen.scaled([y + Y_OFFSET, x + X_OFFSET]);
-        noise[index] = `${n},${x},${y},${index}`;
-        plane.vertices[index].z = n;
+        const noiseValue =
+          noiseGen.noise2D(y + Y_OFFSET, x + X_OFFSET) * 1.5 + 0.75;
+        plane.vertices[index].z = noiseValue;
       }
     }
-    X_OFFSET += 0.1;
+    X_OFFSET += 0.05;
   }
 
   animate() {

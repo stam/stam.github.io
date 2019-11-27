@@ -2219,11 +2219,6 @@ fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-simplex-noise@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/fast-simplex-noise/-/fast-simplex-noise-3.2.1.tgz#3b2bc69013709070587c1722112be6d4ac5e0b41"
-  integrity sha512-JE6qHj7jWexgLIVHr+9ghlyFKSzesPANGJtihlkgzcQVc4kdfk+Ecchi7gkG5noziwdSES4BfJy7v1mayC6EcQ==
-
 fastparse@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/fastparse/-/fastparse-1.1.2.tgz#91728c5a5942eced8531283c79441ee4122c35a9"
@@ -3555,6 +3550,11 @@ onetime@^2.0.0:
   integrity sha1-BnQoIw/WdEOyeUsiu6UotoZ5YtQ=
   dependencies:
     mimic-fn "^1.0.0"
+
+open-simplex-noise@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/open-simplex-noise/-/open-simplex-noise-1.7.0.tgz#eb7bde6d0fec928024675da3fa59e499a1ff40d2"
+  integrity sha512-2IofLUR/T3nZYCD6Il6509efdtdM6bQQ8rEWxgdHNdCALCgwtPnuxvf4e4k47mHBuDht2oEzmVRdOCpMfwq/Cw==
 
 opn@^5.1.0:
   version "5.5.0"
