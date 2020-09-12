@@ -34,12 +34,12 @@ export class Renderer {
 
     const renderer = new Three.WebGLRenderer({
       antialias: true,
-      canvas
+      canvas,
     });
     renderer.setSize(width, height);
     const backgroundColor = new Three.Color("#000");
 
-    renderer.setClearColor(backgroundColor, 1);
+    renderer.setClearColor(backgroundColor, 0);
 
     this.renderer = renderer;
   }
@@ -49,7 +49,7 @@ export class Renderer {
 
     const gridMaterial = new Three.ShaderMaterial({
       vertexShader: document.getElementById("vertexShader").textContent,
-      fragmentShader: document.getElementById("fragmentShader").textContent
+      fragmentShader: document.getElementById("fragmentShader").textContent,
     });
     this._grid = new Three.Mesh(plane, gridMaterial);
 
