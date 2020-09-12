@@ -81,7 +81,6 @@ export class Renderer {
   }
 
   handleResize = () => {
-    console.log("handleReize");
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
