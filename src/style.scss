@@ -25,7 +25,7 @@ canvas {
 h1 {
   position: absolute;
   z-index: 2;
-  right: 10%;
+  left: 50%;
   bottom: 10%;
   font-family: monospace;
   color: white;
@@ -34,5 +34,4 @@ h1 {
 
 main {
   flex: 1;
-  // color: white;
 }

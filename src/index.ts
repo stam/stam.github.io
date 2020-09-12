@@ -20,6 +20,7 @@ export class Renderer {
     this.setupScene(canvas);
     this.createGrid();
     this.animate();
+    window.addEventListener("resize", this.handleResize.bind(this), false);
   }
 
   setupScene(canvas: HTMLCanvasElement) {
@@ -80,16 +81,73 @@ export class Renderer {
     this.renderer.render(this.scene, this.camera);
   }
 
-  handleResize = () => {
+  handleResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-  };
+  }
 }
 
+function delay(millis: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(() => resolve(), millis));
+}
+
+class TitleAnimator {
+  $el: HTMLHeadingElement;
+  queue: string[] = [];
+  constructor(element: HTMLHeadingElement) {
+    this.$el = element;
+    this.animate();
+  }
+
+  async animate() {
+    this.$el.innerHTML = "";
+    this.$el.style.cssText = "";
+
+    await delay(2500);
+
+    await this.type("jas");
+    await delay(50);
+    await this.type("per");
+    await delay(100);
+    await this.type(".");
+    await delay(200);
+    await this.type(".");
+    await delay(100);
+    await this.type(".");
+    await delay(500);
+    await this.delete(2);
+    await delay(200);
+    await this.type("wtf?");
+  }
+
+  async type(text: string) {
+    const chars = text.split("");
+    for (let i = 0; i < chars.length; i++) {
+      await this._type(chars[i], 80);
+    }
+  }
+
+  async delete(amount: number) {
+    for (let i = 0; i < amount; i++) {
+      await this._delete();
+    }
+  }
+
+  async _type(char: string, timeout: number = 100) {
+    this.$el.innerHTML += char;
+    await delay(timeout);
+  }
+
+  async _delete(timeout: number = 100) {
+    const text = this.$el.innerHTML.split("");
+    text.pop();
+    this.$el.innerHTML = text.join("");
+    await delay(timeout);
+  }
+}
+const title = new TitleAnimator(document.querySelector("h1"));
 const renderer = new Renderer(document.querySelector("canvas.main"));
 
-window.addEventListener("resize", renderer.handleResize, false);
-
-export default renderer;
+// export default renderer;
