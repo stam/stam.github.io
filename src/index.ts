@@ -12,7 +12,7 @@ const noiseGen = new Perlin();
 export class Renderer {
   renderer: Three.WebGLRenderer;
   scene: Three.Scene;
-  camera: Three.Camera;
+  camera: Three.PerspectiveCamera;
 
   _grid: Three.Mesh;
 
@@ -79,8 +79,18 @@ export class Renderer {
 
     this.renderer.render(this.scene, this.camera);
   }
+
+  handleResize = () => {
+    console.log("handleReize");
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  };
 }
 
 const renderer = new Renderer(document.querySelector("canvas.main"));
+
+window.addEventListener("resize", renderer.handleResize, false);
 
 export default renderer;
