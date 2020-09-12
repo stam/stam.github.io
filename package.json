@@ -1,23 +1,21 @@
 {
-  "name": "jasper-landing",
-  "author": "JasperStam",
-  "version": "0.0.1",
-  "description": "Landing page for jasper.wtf",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JasperStam/jasper-landing.git"
-  },
-  "keywords": [
-    "jasper-wtf"
-  ],
-  "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-sass": "^3.1.0"
-  },
+  "name": "jasper-wtf",
+  "author": "stam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "deploy": "npm run build && rsync -avz build/ jasper@jasper.wtf:/home/jasper/landing",
-    "start": "gulp",
-    "build": "gulp build"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
-  "license": "ISC"
+  "devDependencies": {
+    "parcel": "^1.12.4",
+    "sass": "^1.23.7",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "libnoise-ts": "^0.1.1",
+    "three": "^0.110.0",
+    "three-orbitcontrols-ts": "^0.1.2"
+  }
 }
