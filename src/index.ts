@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Perlin } from "libnoise-ts/module/generator";
 
+import vertexShader from "./vertex.glsl";
+import fragmentShader from "./fragment.glsl";
+
 const WIDTH_SEGMENTS = 40;
 const HEIGHT_SEGMENTS = 40;
 const NOISE_FACTOR = WIDTH_SEGMENTS / 1.5;
@@ -9,6 +12,8 @@ const SIZE = 5;
 
 let X_OFFSET = 0.201;
 let Y_OFFSET = 0.00001;
+
+let uniforms: any = {};
 
 const noiseGen = new Perlin();
 
@@ -25,6 +30,7 @@ export class Renderer {
   camera: THREE.PerspectiveCamera;
 
   _keysPressed: string[] = [];
+  _startTime: number;
 
   _grid: THREE.Mesh;
   _grid2: THREE.Mesh;
@@ -42,6 +48,7 @@ export class Renderer {
   setupScene(canvas: HTMLCanvasElement) {
     const { width, height } = canvas.getBoundingClientRect();
     this.scene = new THREE.Scene();
+    this._startTime = Date.now();
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.y = -15;
@@ -97,10 +104,19 @@ export class Renderer {
     );
     plane2.translate(0, 1000, 0);
 
+    uniforms = {
+      u_time: { type: "f", value: 1.0 },
+      u_resolution: {
+        type: "v2",
+        value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+      },
+    };
+
     const gridMaterial = new THREE.ShaderMaterial({
-      vertexShader: document.getElementById("vertexShader").textContent,
-      fragmentShader: document.getElementById("fragmentShader").textContent,
+      vertexShader,
+      fragmentShader,
       transparent: true,
+      uniforms,
     });
     var planeMaterial = new THREE.MeshPhongMaterial({
       color: 0xff00ff,
@@ -154,6 +170,10 @@ export class Renderer {
 
   animate() {
     requestAnimationFrame(this.animate.bind(this));
+    var elapsedMilliseconds = Date.now() - this._startTime;
+    var elapsedSeconds = elapsedMilliseconds / 1000;
+    uniforms.u_time.value = elapsedSeconds;
+
     // this.setZ();
     this.fly();
 
