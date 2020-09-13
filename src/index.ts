@@ -5,10 +5,12 @@ import { Perlin } from "libnoise-ts/module/generator";
 import vertexShader from "./vertex.glsl";
 import fragmentShader from "./fragment.glsl";
 
-const WIDTH_SEGMENTS = 40;
-const HEIGHT_SEGMENTS = 40;
-const NOISE_FACTOR = WIDTH_SEGMENTS / 1.5;
+const WIDTH = 220;
+const LENGTH = 100;
 const SIZE = 5;
+const WIDTH_SEGMENTS = Math.floor(WIDTH / SIZE);
+const LENGTH_SEGMENTS = Math.floor(LENGTH / SIZE);
+const Y_SPEED = 0.0025;
 
 let X_OFFSET = 0.201;
 let Y_OFFSET = 0.00001;
@@ -18,12 +20,26 @@ let uniforms: any = {};
 const noiseGen = new Perlin();
 
 // -3 on -5 to 5
+// should become 0.3
 const scale = (val: number, min: number, max: number) => {
   const range = max - min;
   const nval = val - min;
   return nval / range;
 };
 
+// Stretch a number that's between in range [min1, max1] to range [min2, max2]
+const stretch = (
+  val: number,
+  min1: number,
+  max1: number,
+  min2: number,
+  max2: number
+) => {
+  const normalized = scale(val, min1, max1);
+
+  const range2 = max2 - min2;
+  return normalized * range2 + min2;
+};
 export class Renderer {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -55,6 +71,7 @@ export class Renderer {
     camera.position.z = 10;
     this.camera = camera;
     camera.lookAt(this.scene.position);
+    camera.position.y = -30;
     // camera.position.y = HEIGHT_SEGMENTS * 20;
 
     const renderer = new THREE.WebGLRenderer({
@@ -65,7 +82,7 @@ export class Renderer {
     const backgroundColor = new THREE.Color("#000");
 
     var axesHelper = new THREE.AxesHelper(10);
-    this.scene.add(axesHelper);
+    // this.scene.add(axesHelper);
 
     renderer.setClearColor(backgroundColor, 1);
     // const controls = new OrbitControls(camera, renderer.domElement);
@@ -91,18 +108,18 @@ export class Renderer {
 
   createGrid() {
     const plane = new THREE.PlaneGeometry(
-      WIDTH_SEGMENTS * SIZE,
-      HEIGHT_SEGMENTS * SIZE,
+      WIDTH,
+      LENGTH,
       WIDTH_SEGMENTS,
-      HEIGHT_SEGMENTS
+      LENGTH_SEGMENTS
     );
-    const plane2 = new THREE.PlaneGeometry(
-      WIDTH_SEGMENTS * SIZE,
-      HEIGHT_SEGMENTS * SIZE,
-      WIDTH_SEGMENTS,
-      HEIGHT_SEGMENTS
-    );
-    plane2.translate(0, 1000, 0);
+    // const plane2 = new THREE.PlaneGeometry(
+    //   WIDTH_SEGMENTS * SIZE,
+    //   LEN,
+    //   WIDTH_SEGMENTS,
+    //   HEIGHT_SEGMENTS
+    // );
+    // plane2.translate(0, 1000, 0);
 
     uniforms = {
       u_time: { type: "f", value: 1.0 },
@@ -123,7 +140,7 @@ export class Renderer {
       wireframe: true,
     });
     this._grid = new THREE.Mesh(plane, gridMaterial);
-    this._grid2 = new THREE.Mesh(plane2, planeMaterial);
+    // this._grid2 = new THREE.Mesh(plane2, planeMaterial);
     // this._grid = new THREE.Mesh(plane, planeMaterial);
     this._grid.receiveShadow = true;
 
@@ -131,17 +148,17 @@ export class Renderer {
     this.scene.add(directionalLight);
 
     this.scene.add(this._grid);
-    this.scene.add(this._grid2);
+    // this.scene.add(this._grid2);
   }
 
   setZ() {
     const plane = this._grid.geometry as THREE.Geometry;
-    const plane2 = this._grid2.geometry as THREE.Geometry;
+    // const plane2 = this._grid2.geometry as THREE.Geometry;
     plane.verticesNeedUpdate = true;
-    plane2.verticesNeedUpdate = true;
+    // plane2.verticesNeedUpdate = true;
 
-    const X_RANGE = 0.5 * WIDTH_SEGMENTS * SIZE;
-    const Y_RANGE = 0.5 * HEIGHT_SEGMENTS * SIZE;
+    const X_RANGE = 0.5 * WIDTH;
+    const Y_RANGE = 0.5 * LENGTH;
 
     let minZ: number = 10;
     let maxZ: number = -10;
@@ -152,20 +169,22 @@ export class Renderer {
       const scaledX = scale(x, -X_RANGE, X_RANGE);
       const scaledY = scale(y, -Y_RANGE, Y_RANGE);
 
-      const z =
-        noiseGen.getValue(scaledX, scaledY, 2) * NOISE_FACTOR - NOISE_FACTOR;
-      plane.vertices[i].z = z;
-      plane2.vertices[i].z = z;
+      const rawZ = noiseGen.getValue(scaledX, scaledY + Y_OFFSET, 2);
+      const z = stretch(rawZ, -0.5, 1, -30, 0);
 
-      if (z < minZ) {
-        minZ = z;
-      }
-      if (z > maxZ) {
-        maxZ = z;
-      }
+      plane.vertices[i].z = z;
+
+      // if (z < minZ) {
+      //   minZ = z;
+      // }
+      // if (z > maxZ) {
+      //   maxZ = z;
+      // }
     }
 
-    console.log(minZ, maxZ, NOISE_FACTOR);
+    Y_OFFSET += Y_SPEED;
+
+    // console.log(minZ, maxZ, "stretch", stretch(0.6, 0, 1, -5, 5));
   }
 
   animate() {
@@ -174,14 +193,14 @@ export class Renderer {
     var elapsedSeconds = elapsedMilliseconds / 1000;
     uniforms.u_time.value = elapsedSeconds;
 
-    // this.setZ();
+    this.setZ();
     this.fly();
 
     this.renderer.render(this.scene, this.camera);
   }
 
   fly() {
-    const STEP = 0.7;
+    const STEP = 0.4;
     if (this._keysPressed.includes("w")) {
       this.camera.position.y += STEP;
     }
