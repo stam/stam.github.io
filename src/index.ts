@@ -142,6 +142,9 @@ export class Renderer {
     }
 
     Y_OFFSET += Y_SPEED;
+
+    plane.computeFaceNormals();
+    plane.computeVertexNormals();
   }
 
   animate() {
