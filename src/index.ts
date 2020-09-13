@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Perlin } from "libnoise-ts/module/generator";
 
 import vertexShader from "./vertex.glsl";
@@ -12,15 +11,13 @@ const WIDTH_SEGMENTS = Math.floor(WIDTH / SIZE);
 const LENGTH_SEGMENTS = Math.floor(LENGTH / SIZE);
 const Y_SPEED = 0.0025;
 
-let X_OFFSET = 0.201;
 let Y_OFFSET = 0.00001;
 
 let uniforms: any = {};
 
 const noiseGen = new Perlin();
 
-// -3 on -5 to 5
-// should become 0.3
+// Scale a number between [min, max] to [0, 1]
 const scale = (val: number, min: number, max: number) => {
   const range = max - min;
   const nval = val - min;
@@ -72,7 +69,6 @@ export class Renderer {
     this.camera = camera;
     camera.lookAt(this.scene.position);
     camera.position.y = -30;
-    // camera.position.y = HEIGHT_SEGMENTS * 20;
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -81,14 +77,7 @@ export class Renderer {
     renderer.setSize(width, height);
     const backgroundColor = new THREE.Color("#000");
 
-    var axesHelper = new THREE.AxesHelper(10);
-    // this.scene.add(axesHelper);
-
     renderer.setClearColor(backgroundColor, 1);
-    // const controls = new OrbitControls(camera, renderer.domElement);
-    // controls.enableDamping = true;
-    // controls.dampingFactor = 0.25;
-    // controls.enableZoom = false;
 
     this.renderer = renderer;
   }
@@ -113,13 +102,6 @@ export class Renderer {
       WIDTH_SEGMENTS,
       LENGTH_SEGMENTS
     );
-    // const plane2 = new THREE.PlaneGeometry(
-    //   WIDTH_SEGMENTS * SIZE,
-    //   LEN,
-    //   WIDTH_SEGMENTS,
-    //   HEIGHT_SEGMENTS
-    // );
-    // plane2.translate(0, 1000, 0);
 
     uniforms = {
       u_time: { type: "f", value: 1.0 },
@@ -135,33 +117,17 @@ export class Renderer {
       transparent: true,
       uniforms,
     });
-    var planeMaterial = new THREE.MeshPhongMaterial({
-      color: 0xff00ff,
-      wireframe: true,
-    });
     this._grid = new THREE.Mesh(plane, gridMaterial);
-    // this._grid2 = new THREE.Mesh(plane2, planeMaterial);
-    // this._grid = new THREE.Mesh(plane, planeMaterial);
-    this._grid.receiveShadow = true;
-
-    var directionalLight = new THREE.AmbientLight(0x404040);
-    this.scene.add(directionalLight);
 
     this.scene.add(this._grid);
-    // this.scene.add(this._grid2);
   }
 
   setZ() {
     const plane = this._grid.geometry as THREE.Geometry;
-    // const plane2 = this._grid2.geometry as THREE.Geometry;
     plane.verticesNeedUpdate = true;
-    // plane2.verticesNeedUpdate = true;
 
     const X_RANGE = 0.5 * WIDTH;
     const Y_RANGE = 0.5 * LENGTH;
-
-    let minZ: number = 10;
-    let maxZ: number = -10;
 
     for (let i = 0; i < plane.vertices.length; i++) {
       const { x, y } = plane.vertices[i];
@@ -173,18 +139,9 @@ export class Renderer {
       const z = stretch(rawZ, -0.5, 1, -30, 0);
 
       plane.vertices[i].z = z;
-
-      // if (z < minZ) {
-      //   minZ = z;
-      // }
-      // if (z > maxZ) {
-      //   maxZ = z;
-      // }
     }
 
     Y_OFFSET += Y_SPEED;
-
-    // console.log(minZ, maxZ, "stretch", stretch(0.6, 0, 1, -5, 5));
   }
 
   animate() {
@@ -194,7 +151,7 @@ export class Renderer {
     uniforms.u_time.value = elapsedSeconds;
 
     this.setZ();
-    this.fly();
+    // this.fly();
 
     this.renderer.render(this.scene, this.camera);
   }
@@ -213,9 +170,6 @@ export class Renderer {
     if (this._keysPressed.includes("d")) {
       this.camera.position.x += STEP;
     }
-
-    // this.camera.position.y = 460;
-    // this.camera.position.y += 0.69;
   }
 
   handleResize() {
@@ -284,7 +238,5 @@ class TitleAnimator {
     await delay(timeout);
   }
 }
-const title = new TitleAnimator(document.querySelector("h1"));
-const renderer = new Renderer(document.querySelector("canvas.main"));
-
-// export default renderer;
+new TitleAnimator(document.querySelector("h1"));
+new Renderer(document.querySelector("canvas.main"));
