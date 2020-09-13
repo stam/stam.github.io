@@ -2,13 +2,22 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Perlin } from "libnoise-ts/module/generator";
 
-const WIDTH = 40;
-const HEIGHT = 40;
+const WIDTH_SEGMENTS = 40;
+const HEIGHT_SEGMENTS = 40;
+const NOISE_FACTOR = WIDTH_SEGMENTS / 1.5;
+const SIZE = 5;
 
 let X_OFFSET = 0.201;
 let Y_OFFSET = 0.00001;
 
 const noiseGen = new Perlin();
+
+// -3 on -5 to 5
+const scale = (val: number, min: number, max: number) => {
+  const range = max - min;
+  const nval = val - min;
+  return nval / range;
+};
 
 export class Renderer {
   renderer: THREE.WebGLRenderer;
@@ -39,7 +48,7 @@ export class Renderer {
     camera.position.z = 10;
     this.camera = camera;
     camera.lookAt(this.scene.position);
-    // camera.position.y = HEIGHT * 20;
+    // camera.position.y = HEIGHT_SEGMENTS * 20;
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -74,24 +83,30 @@ export class Renderer {
   }
 
   createGrid() {
-    const plane = new THREE.PlaneGeometry(WIDTH * 5, HEIGHT * 5, WIDTH, HEIGHT);
+    const plane = new THREE.PlaneGeometry(
+      WIDTH_SEGMENTS * SIZE,
+      HEIGHT_SEGMENTS * SIZE,
+      WIDTH_SEGMENTS,
+      HEIGHT_SEGMENTS
+    );
     const plane2 = new THREE.PlaneGeometry(
-      WIDTH * 5,
-      HEIGHT * 5,
-      WIDTH,
-      HEIGHT
+      WIDTH_SEGMENTS * SIZE,
+      HEIGHT_SEGMENTS * SIZE,
+      WIDTH_SEGMENTS,
+      HEIGHT_SEGMENTS
     );
     plane2.translate(0, 1000, 0);
 
     const gridMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("vertexShader").textContent,
       fragmentShader: document.getElementById("fragmentShader").textContent,
+      transparent: true,
     });
-    this._grid = new THREE.Mesh(plane, gridMaterial);
     var planeMaterial = new THREE.MeshPhongMaterial({
       color: 0xff00ff,
       wireframe: true,
     });
+    this._grid = new THREE.Mesh(plane, gridMaterial);
     this._grid2 = new THREE.Mesh(plane2, planeMaterial);
     // this._grid = new THREE.Mesh(plane, planeMaterial);
     this._grid.receiveShadow = true;
@@ -109,45 +124,32 @@ export class Renderer {
     plane.verticesNeedUpdate = true;
     plane2.verticesNeedUpdate = true;
 
-    // for (let y: number = 0; y < 1; y += 0.1) {
-    //   let rowOfValues: number[] = [];
+    const X_RANGE = 0.5 * WIDTH_SEGMENTS * SIZE;
+    const Y_RANGE = 0.5 * HEIGHT_SEGMENTS * SIZE;
 
-    //   for (let x: number = 0; x < 1; x += 0.1) {
-    //     // Get value from Perlin generator
-    //     let value = perlin.getValue(x, y, 0);
+    let minZ: number = 10;
+    let maxZ: number = -10;
 
-    //     // Floor, scale and Abs value to produce nice positive integers
-    //     value = Math.abs(Math.floor(value * 10));
+    for (let i = 0; i < plane.vertices.length; i++) {
+      const { x, y } = plane.vertices[i];
 
-    //     rowOfValues.push(value);
-    //   }
+      const scaledX = scale(x, -X_RANGE, X_RANGE);
+      const scaledY = scale(y, -Y_RANGE, Y_RANGE);
 
-    //   // Print out row of values
-    //   console.log(rowOfValues.join(" "));
-    // }
+      const z =
+        noiseGen.getValue(scaledX, scaledY, 2) * NOISE_FACTOR - NOISE_FACTOR;
+      plane.vertices[i].z = z;
+      plane2.vertices[i].z = z;
 
-    // console.log("vert", plane.vertices);
-
-    for (let row = 1; row < HEIGHT; row++) {
-      for (let col = 1; col < WIDTH; col++) {
-        const index = col + row * (WIDTH + 1);
-
-        // X_OFFSET += 0.004;
-
-        const { x, y } = plane.vertices[index];
-        const noiseValue =
-          noiseGen.getValue((x * 20) / WIDTH, (y * 10) / HEIGHT, 0) * 3;
-        plane.vertices[index].z = noiseValue;
-
-        const index2 = row + col;
-        plane2.vertices[index].z = row === col ? 10 : 0;
-
-        // plane2.vertices[index].z = noiseValue;
+      if (z < minZ) {
+        minZ = z;
       }
-      Y_OFFSET += 0.0001;
-      X_OFFSET += 0.0001;
+      if (z > maxZ) {
+        maxZ = z;
+      }
     }
-    console.log(plane.vertices.length);
+
+    console.log(minZ, maxZ, NOISE_FACTOR);
   }
 
   animate() {
