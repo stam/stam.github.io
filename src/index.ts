@@ -3,36 +3,19 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Perlin } from "libnoise-ts/module/generator";
 
 const WIDTH = 40;
-const HEIGHT = 200;
+const HEIGHT = 40;
 
 let X_OFFSET = 0.201;
 let Y_OFFSET = 0.00001;
 
 const noiseGen = new Perlin();
 
-const perlin: Perlin = new Perlin();
-
-for (let y: number = 0; y < 1; y += 0.1) {
-  let rowOfValues: number[] = [];
-
-  for (let x: number = 0; x < 1; x += 0.1) {
-    // Get value from Perlin generator
-    let value = perlin.getValue(x, y, 0);
-
-    // Floor, scale and Abs value to produce nice positive integers
-    value = Math.abs(Math.floor(value * 10));
-
-    rowOfValues.push(value);
-  }
-
-  // Print out row of values
-  console.log(rowOfValues.join(" "));
-}
-
 export class Renderer {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
+
+  _keysPressed: string[] = [];
 
   _grid: THREE.Mesh;
   _grid2: THREE.Mesh;
@@ -43,6 +26,7 @@ export class Renderer {
     this.animate();
 
     this.setZ();
+    this.registerKeys();
     window.addEventListener("resize", this.handleResize.bind(this), false);
   }
 
@@ -55,6 +39,7 @@ export class Renderer {
     camera.position.z = 10;
     this.camera = camera;
     camera.lookAt(this.scene.position);
+    // camera.position.y = HEIGHT * 20;
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -75,9 +60,27 @@ export class Renderer {
     this.renderer = renderer;
   }
 
+  registerKeys() {
+    document.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+      if (!this._keysPressed.includes(key)) {
+        this._keysPressed.push(key);
+      }
+    });
+    document.addEventListener("keyup", (e) => {
+      const key = e.key.toLowerCase();
+      this._keysPressed = this._keysPressed.filter((k) => k !== key);
+    });
+  }
+
   createGrid() {
-    const plane = new THREE.PlaneGeometry(200, 1000, WIDTH, HEIGHT);
-    const plane2 = new THREE.PlaneGeometry(200, 1000, WIDTH, HEIGHT);
+    const plane = new THREE.PlaneGeometry(WIDTH * 5, HEIGHT * 5, WIDTH, HEIGHT);
+    const plane2 = new THREE.PlaneGeometry(
+      WIDTH * 5,
+      HEIGHT * 5,
+      WIDTH,
+      HEIGHT
+    );
     plane2.translate(0, 1000, 0);
 
     const gridMaterial = new THREE.ShaderMaterial({
@@ -125,11 +128,10 @@ export class Renderer {
 
     // console.log("vert", plane.vertices);
 
-    for (let row = 0; row < HEIGHT; row++) {
-      for (let col = 0; col < WIDTH; col++) {
+    for (let row = 1; row < HEIGHT; row++) {
+      for (let col = 1; col < WIDTH; col++) {
         const index = col + row * (WIDTH + 1);
 
-        const index2 = plane2.vertices.length - index;
         // X_OFFSET += 0.004;
 
         const { x, y } = plane.vertices[index];
@@ -137,11 +139,15 @@ export class Renderer {
           noiseGen.getValue((x * 20) / WIDTH, (y * 10) / HEIGHT, 0) * 3;
         plane.vertices[index].z = noiseValue;
 
-        plane2.vertices[index].z = noiseValue;
+        const index2 = row + col;
+        plane2.vertices[index].z = row === col ? 10 : 0;
+
+        // plane2.vertices[index].z = noiseValue;
       }
       Y_OFFSET += 0.0001;
       X_OFFSET += 0.0001;
     }
+    console.log(plane.vertices.length);
   }
 
   animate() {
@@ -153,7 +159,22 @@ export class Renderer {
   }
 
   fly() {
-    this.camera.position.y += 1.3;
+    const STEP = 0.7;
+    if (this._keysPressed.includes("w")) {
+      this.camera.position.y += STEP;
+    }
+    if (this._keysPressed.includes("s")) {
+      this.camera.position.y -= STEP;
+    }
+    if (this._keysPressed.includes("a")) {
+      this.camera.position.x -= STEP;
+    }
+    if (this._keysPressed.includes("d")) {
+      this.camera.position.x += STEP;
+    }
+
+    // this.camera.position.y = 460;
+    // this.camera.position.y += 0.69;
   }
 
   handleResize() {
